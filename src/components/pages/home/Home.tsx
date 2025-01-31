@@ -14,6 +14,10 @@ import {
   Chip,
   Tab,
   Radio,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 
 import { Card, CardActions } from "../../styled/Card.styled";
@@ -22,14 +26,22 @@ import { GridCloseIcon } from "@mui/x-data-grid";
 import { Box } from "@mui/system";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
+  useDeleteActionItemsMutation,
   useGetActionItemsQuery,
   useGetInsightsQuery,
   useTicketCountQuery,
+  useUpdateActionItemsMutation,
 } from "../../../apis/usersApi";
+import groupBy from "lodash/groupBy";
 
 export const Home = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("1");
+  const [selectedId, setSelectedId] = useState("");
+  const [selectValue, setSelectValue] = useState("CREATED");
+
+  const [deleteActionItem] = useDeleteActionItemsMutation();
+  const [updateActionItem] = useUpdateActionItemsMutation();
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -46,12 +58,26 @@ export const Home = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  const { data: actionsData } = useGetActionItemsQuery({
+  const { data: actionsData } = useGetActionItemsQuery(selectValue, {
     refetchOnMountOrArgChange: true,
   });
 
-  console.log(insightsData, "insightsData");
-  console.log(actionsData, "actionsData");
+  const result = groupBy(
+    actionsData,
+    (action: any) => action?.action_item_type
+  );
+
+  const handleDelete = (id: string) => {
+    deleteActionItem(id);
+  };
+
+  const handleUpdate = (id: string) => {
+    updateActionItem(id);
+  };
+
+  const handleSelectChange = (event: any) => {
+    setSelectValue(event.target.value);
+  };
 
   return (
     <>
@@ -189,110 +215,169 @@ export const Home = () => {
           </Box>
         </TabPanel>
         <TabPanel value="2">
-          <Typography
-            noWrap
-            sx={{
-              color: "#424242",
-              fontSize: "20px",
-              margin: "0 32px",
-            }}
-          >
-            Key Actionables
-          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography
+              noWrap
+              sx={{
+                color: "#424242",
+                fontSize: "20px",
+                margin: "0 32px",
+              }}
+            >
+              Key Actionables
+            </Typography>
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              <InputLabel id="demo-simple-select-helper-label">
+                Status of Actionable
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-helper-label"
+                id="demo-simple-select-helper"
+                value={selectValue}
+                label="Status of Actionable"
+                onChange={handleSelectChange}
+              >
+                <MenuItem value={"CREATED"}>Pending</MenuItem>
+                <MenuItem value={"IMPLEMENTED"}>Implemented</MenuItem>
+                <MenuItem value={"REJECTED"}>Rejected</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
               width: "100%",
               margin: "0 32px",
             }}
           >
-            <Card sx={{ width: "100%", backgroundColor: "#FFF" }}>
-              <Box sx={{ position: "relative" }}>
-                <Chip
-                  label="Tech/Product Enhancement"
-                  sx={{
-                    position: "absolute",
-                    top: "-16px",
-                    left: "-16px",
-                    backgroundColor: "#DFF2F1",
-                  }}
-                />
-                <CardContent>
-                  <Box>
-                    <FormGroup>
-                      <FormControlLabel
-                        sx={{
-                          width: "100%",
-                          "& > span:last-child": {
-                            width: "100%",
-                          },
-                          marginTop: "16px",
-                        }}
-                        control={<Radio color="secondary" />}
-                        label={
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              width: "100%",
-                            }}
-                          >
-                            <Box>
-                              <Typography>
-                                Introduce a new support category- Lorem Ipsum{" "}
-                              </Typography>
-                              <Typography variant="body2">
-                                Subtitle comes here if required
-                              </Typography>
-                            </Box>
-                            <Box>
-                              <IconButton onClick={() => {}}>
-                                <GridCloseIcon />
-                              </IconButton>
-                            </Box>{" "}
-                          </Box>
-                        }
-                      />
-                      <FormControlLabel
-                        sx={{
-                          width: "100%",
-                          "& > span:last-child": {
-                            width: "100%",
-                          },
-                        }}
-                        control={<Radio color="secondary" />}
-                        label={
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              width: "100%",
-                            }}
-                          >
-                            <Box>
-                              <Typography>
-                                Introduce a new support category- Lorem Ipsum{" "}
-                              </Typography>
-                              <Typography variant="body2">
-                                Subtitle comes here if required
-                              </Typography>
-                            </Box>
-                            <Box>
-                              <IconButton onClick={() => {}}>
-                                <GridCloseIcon />
-                              </IconButton>
-                            </Box>{" "}
-                          </Box>
-                        }
-                      />
-                    </FormGroup>
+            {Object.keys(result).map((el, index) => {
+              return (
+                <Card
+                  sx={{ width: "100%", backgroundColor: "#FFF" }}
+                  key={index}
+                >
+                  <Box sx={{ position: "relative" }}>
+                    <Chip
+                      label={
+                        el === "jira"
+                          ? "Tech/Product Enhancement"
+                          : el === "alert"
+                          ? "Operational Alerts"
+                          : el === "faq"
+                          ? "FAQs/Communication Related"
+                          : null
+                      }
+                      sx={{
+                        position: "absolute",
+                        top: "-16px",
+                        left: "-16px",
+                        backgroundColor: "#DFF2F1",
+                      }}
+                    />
+                    <>
+                      {selectValue === "REJECTED" ? (
+                        <Chip
+                          label="Rejected"
+                          sx={{
+                            position: "absolute",
+                            top: "-16px",
+                            right: "-16px",
+                          }}
+                          color="error"
+                        />
+                      ) : selectValue === "IMPLEMENTED" ? (
+                        <Chip
+                          label="Implemented"
+                          sx={{
+                            position: "absolute",
+                            top: "-16px",
+                            right: "-16px",
+                            backgroundColor: "#DFF2F1",
+                            color: "#08753F",
+                          }}
+                        />
+                      ) : null}
+                    </>
+                    <CardContent>
+                      <Box>
+                        <FormGroup>
+                          {result[el].map((action) => {
+                            return (
+                              <FormControlLabel
+                                key={action?._id}
+                                sx={{
+                                  width: "100%",
+                                  "& > span:last-child": {
+                                    width: "100%",
+                                  },
+                                  marginTop: "16px",
+                                }}
+                                control={
+                                  <Radio
+                                    color="secondary"
+                                    checked={action?._id === selectedId}
+                                    onClick={() => setSelectedId(action?._id)}
+                                  />
+                                }
+                                label={
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                      width: "100%",
+                                    }}
+                                  >
+                                    <Box>
+                                      <Typography>
+                                        {action?.action_item_data?.question ||
+                                          action?.action_item_data?.title ||
+                                          action?.action_item_data?.subject}
+                                      </Typography>
+                                      <Typography variant="body2">
+                                        {action?.action_item_data?.answer ||
+                                          action?.action_item_data
+                                            ?.description ||
+                                          action?.action_item_data?.body}
+                                      </Typography>
+                                    </Box>
+                                    <Box>
+                                      {action?.status === "CREATED" ? (
+                                        <>
+                                          {action?._id === selectedId ? (
+                                            <Button
+                                              type="submit"
+                                              variant="contained"
+                                              sx={{ color: "#fff" }}
+                                              onClick={() =>
+                                                handleUpdate(action?._id)
+                                              }
+                                            >
+                                              Implement
+                                            </Button>
+                                          ) : (
+                                            <IconButton
+                                              onClick={() =>
+                                                handleDelete(action?._id)
+                                              }
+                                            >
+                                              <GridCloseIcon />
+                                            </IconButton>
+                                          )}
+                                        </>
+                                      ) : null}
+                                    </Box>
+                                  </Box>
+                                }
+                              />
+                            );
+                          })}
+                        </FormGroup>
+                      </Box>
+                    </CardContent>
                   </Box>
-                </CardContent>
-              </Box>
-            </Card>
+                </Card>
+              );
+            })}
           </Box>
         </TabPanel>
       </TabContext>

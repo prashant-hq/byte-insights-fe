@@ -57,6 +57,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.15",
     "@types/react-copy-to-clipboard": "^5.0.4"
   }
 }

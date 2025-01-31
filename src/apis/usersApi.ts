@@ -53,6 +53,7 @@ export const usersApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl,
   }),
+  tagTypes: ["ActionItems"],
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => ({
@@ -83,11 +84,30 @@ export const usersApi = createApi({
       transformResponse: (res: any) => res,
     }),
     getActionItems: builder.query({
-      query: () => ({
-        url: `/action-items?actionItemStatus=CREATED`,
+      query: (item: string) => ({
+        url: `/action-items?actionItemStatus=${item}`,
         responseHandler: async (res: any) => await res.json(),
       }),
       transformResponse: (res: any) => res,
+      providesTags: ["ActionItems"],
+    }),
+    updateActionItems: builder.mutation({
+      query: (actionItemId: string) => ({
+        url: `/action-items/${actionItemId}`,
+        method: "PUT",
+        responseHandler: async (res: any) => await res.json(),
+      }),
+      transformResponse: (res: any) => res,
+      invalidatesTags: ["ActionItems"],
+    }),
+    deleteActionItems: builder.mutation({
+      query: (actionItemId: string) => ({
+        url: `/action-items/${actionItemId}`,
+        method: "DELETE",
+        responseHandler: async (res: any) => await res.json(),
+      }),
+      transformResponse: (res: any) => res,
+      invalidatesTags: ["ActionItems"],
     }),
   }),
 });
@@ -98,4 +118,6 @@ export const {
   useTicketCountQuery,
   useGetInsightsQuery,
   useGetActionItemsQuery,
+  useUpdateActionItemsMutation,
+  useDeleteActionItemsMutation,
 } = usersApi;
