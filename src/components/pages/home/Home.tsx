@@ -35,11 +35,11 @@ export const Home = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("1");
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [dataFromPrompt, setDataFromPrompt] = useState<any>();
   const { data, refetch: refetchInsightsFromPrompt } = useGetInsightFromPromptQuery(searchQuery, {
     skip: !searchQuery, 
   });
-  console.log(data);
+  setDataFromPrompt(data);
   const handleSearch = () => {
     if (searchQuery.trim()) {
       refetchInsightsFromPrompt();
