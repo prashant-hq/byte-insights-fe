@@ -14,8 +14,11 @@ import {
   Chip,
   Tab,
   Radio,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 
+import SearchIcon from "@mui/icons-material/Search";
 import { Card, CardActions } from "../../styled/Card.styled";
 import { useAppSelector } from "../../../app/hooks";
 import { GridCloseIcon } from "@mui/x-data-grid";
@@ -25,11 +28,23 @@ import {
   useGetActionItemsQuery,
   useGetInsightsQuery,
   useTicketCountQuery,
+  useGetInsightFromPromptQuery,
 } from "../../../apis/usersApi";
 
 export const Home = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("1");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { data, refetch: refetchInsightsFromPrompt } = useGetInsightFromPromptQuery(searchQuery, {
+    skip: !searchQuery, 
+  });
+  console.log(data);
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      refetchInsightsFromPrompt();
+    }
+  };
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -55,6 +70,21 @@ export const Home = () => {
 
   return (
     <>
+      <TextField
+        label="How can I help you today?"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        sx={{ width: '100%', borderRadius: "50px" }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton edge="end" onClick={handleSearch}>
+                <SearchIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList onChange={handleChange} aria-label="lab API tabs example">

@@ -6,7 +6,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 /**
  * Base API URL
  */
-const baseUrl: string = `https://api.watchtower.gohq.in/api`;
+const baseUrl: string = `https://api.watchtower.gohq.in/api/`;
 
 /**
  * User
@@ -89,6 +89,19 @@ export const usersApi = createApi({
       }),
       transformResponse: (res: any) => res,
     }),
+    getInsightFromPrompt: builder.query({
+      query: (prompt) => ({
+        url: 'rag/insight',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': 'connect.sid=s%3AT8eUzCetQj_R_cWwF3O_JdgWLjMNvkj-.rNHeeitvwTJhHuzO9JXJweLUHd5DYdYuofyBchKQ%2Fj0', // Your Cookie
+        },
+        body: JSON.stringify({ prompt }),
+        responseHandler: async (res) => await res.json(), 
+      }),
+      transformResponse: (res) => res, 
+    })
   }),
 });
 
@@ -98,4 +111,5 @@ export const {
   useTicketCountQuery,
   useGetInsightsQuery,
   useGetActionItemsQuery,
+  useGetInsightFromPromptQuery
 } = usersApi;
