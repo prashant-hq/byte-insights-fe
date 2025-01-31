@@ -10,136 +10,273 @@ import {
   CardContent,
   FormGroup,
   FormControlLabel,
-  Checkbox,
   Typography,
   Chip,
+  Tab,
+  Radio,
 } from "@mui/material";
 
 import { Card, CardActions } from "../../styled/Card.styled";
 import { useAppSelector } from "../../../app/hooks";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { Box } from "@mui/system";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import {
+  useGetActionItemsQuery,
+  useGetInsightsQuery,
+  useTicketCountQuery,
+} from "../../../apis/usersApi";
 
 const arr = [1, 2, 3, 4, 5, 6];
 
 export const Home = () => {
   const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("1");
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
 
   const drawerOpen: boolean = useAppSelector((state) => state.app.drawerOpen);
   const elevation: number = useMemo(() => (drawerOpen ? 0 : 2), [drawerOpen]);
 
+  const { data: countData } = useTicketCountQuery({
+    refetchOnMountOrArgChange: true,
+  });
+
+  const { data: insightsData } = useGetInsightsQuery({
+    refetchOnMountOrArgChange: true,
+  });
+
+  const { data: actionsData } = useGetActionItemsQuery({
+    refetchOnMountOrArgChange: true,
+  });
+
+  console.log(insightsData, "insightsData");
+  console.log(actionsData, "actionsData");
+
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-        }}
-      >
-        {arr.map((el) => {
-          return (
-            <Card elevation={elevation} drawerOpen={drawerOpen}>
-              <CardHeader
-                title="Material UI Boilerplate"
-                subheader={`${new Date().toLocaleString("en-US", {
-                  dateStyle: "full",
-                })}`}
-              />
-              <CardActions>
-                <Button
-                  color="secondary"
-                  variant="contained"
-                  onClick={() => setOpen(true)}
-                >
-                  Open
-                </Button>
-              </CardActions>
-            </Card>
-          );
-        })}
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-        <Card sx={{ width: "100%" }}>
-          <CardHeader title="Key Actionable" sx={{ padding: "16px 0px" }} />
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <TabList onChange={handleChange} aria-label="lab API tabs example">
+            <Tab label="Overview" value="1" />
+            <Tab label="Summary of Actionables" value="2" />
+          </TabList>
+        </Box>
+        <TabPanel value="1">
           <Box>
-            <Chip label="Actionable" sx={{ borderRadius: "0px" }} />
-            <CardContent>
-              <Box>
-                <FormGroup>
-                  <FormControlLabel
-                    sx={{
-                      width: "100%",
-                      "& > span:last-child": {
-                        width: "100%",
-                      },
-                    }}
-                    control={<Checkbox color="secondary" />}
-                    label={
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          width: "100%",
-                        }}
-                      >
-                        <Box>
-                          <Typography>
-                            Introduce a new support category- Lorem Ipsum{" "}
-                          </Typography>
-                          <Typography variant="body2">
-                            Subtitle comes here if required
-                          </Typography>
-                        </Box>
-                        <Box>
-                          <IconButton onClick={() => {}}>
-                            <GridCloseIcon />
-                          </IconButton>
-                        </Box>{" "}
-                      </Box>
-                    }
-                  />
-                  <FormControlLabel
-                    sx={{
-                      width: "100%",
-                      "& > span:last-child": {
-                        width: "100%",
-                      },
-                    }}
-                    control={<Checkbox color="secondary" />}
-                    label={
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          width: "100%",
-                        }}
-                      >
-                        <Box>
-                          <Typography>
-                            Introduce a new support category- Lorem Ipsum{" "}
-                          </Typography>
-                          <Typography variant="body2">
-                            Subtitle comes here if required
-                          </Typography>
-                        </Box>
-                        <Box>
-                          <IconButton onClick={() => {}}>
-                            <GridCloseIcon />
-                          </IconButton>
-                        </Box>{" "}
-                      </Box>
-                    }
-                  />
-                </FormGroup>
+            <Typography
+              component="div"
+              variant="h6"
+              sx={{ width: "100%", margin: "0 32px" }}
+            >
+              <Box sx={{ display: "flex" }}>
+                <Typography
+                  noWrap
+                  sx={{
+                    borderRight: "1px solid #9E9E9E",
+                    paddingRight: "28px",
+                    marginRight: "28px",
+                    color: "#424242",
+                    fontSize: "20px",
+                  }}
+                >
+                  Tickets
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "80%",
+                  }}
+                >
+                  <Typography
+                    sx={{ color: "#424242", fontSize: "20px" }}
+                    noWrap
+                  >
+                    Tickets Total : {countData?.totalTickets}
+                  </Typography>
+                  <Typography
+                    sx={{ color: "#424242", fontSize: "20px" }}
+                    noWrap
+                  >
+                    Tickets Closed: {countData?.closedTickets}
+                  </Typography>
+                  <Typography
+                    sx={{ color: "#424242", fontSize: "20px" }}
+                    noWrap
+                  >
+                    Tickets Opened: {countData?.openTickets}
+                  </Typography>
+                  <Typography
+                    sx={{ color: "#424242", fontSize: "20px" }}
+                    noWrap
+                  >
+                    Tickets Escalated: {countData?.escalatedTickets}
+                  </Typography>
+                </Box>
               </Box>
-            </CardContent>
+            </Typography>
           </Box>
-        </Card>
-      </Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+            }}
+          >
+            {arr.map((el) => {
+              return (
+                <Card
+                  elevation={elevation}
+                  drawerOpen={drawerOpen}
+                  sx={{
+                    backgroundColor: "#DFF2F1",
+                    margin: "32px",
+                    width: "250px",
+                    height: "250px",
+                  }}
+                >
+                  <CardHeader
+                    title="Material UI Boilerplate"
+                    subheader={`${new Date().toLocaleString("en-US", {
+                      dateStyle: "full",
+                    })}`}
+                    titleTypographyProps={{
+                      fontSize: 16,
+                      fontWeight: 600,
+                    }}
+                    subheaderTypographyProps={{
+                      fontSize: 14,
+                      fontWeight: 500,
+                      marginTop: 2,
+                    }}
+                  />
+                  <CardActions sx={{ justifyContent: "right" }}>
+                    <Button
+                      color="secondary"
+                      variant="text"
+                      onClick={() => setOpen(true)}
+                      sx={{ color: "#00637F", fontSize: "12px" }}
+                    >
+                      Know more
+                    </Button>
+                  </CardActions>
+                </Card>
+              );
+            })}
+          </Box>
+        </TabPanel>
+        <TabPanel value="2">
+          <Typography
+            noWrap
+            sx={{
+              color: "#424242",
+              fontSize: "20px",
+              margin: "0 32px",
+            }}
+          >
+            Key Actionables
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+              margin: "0 32px",
+            }}
+          >
+            <Card sx={{ width: "100%", backgroundColor: "#FFF" }}>
+              <Box sx={{ position: "relative" }}>
+                <Chip
+                  label="Tech/Product Enhancement"
+                  sx={{
+                    position: "absolute",
+                    top: "-16px",
+                    left: "-16px",
+                    backgroundColor: "#DFF2F1",
+                  }}
+                />
+                <CardContent>
+                  <Box>
+                    <FormGroup>
+                      <FormControlLabel
+                        sx={{
+                          width: "100%",
+                          "& > span:last-child": {
+                            width: "100%",
+                          },
+                          marginTop: "16px",
+                        }}
+                        control={<Radio color="secondary" />}
+                        label={
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              width: "100%",
+                            }}
+                          >
+                            <Box>
+                              <Typography>
+                                Introduce a new support category- Lorem Ipsum{" "}
+                              </Typography>
+                              <Typography variant="body2">
+                                Subtitle comes here if required
+                              </Typography>
+                            </Box>
+                            <Box>
+                              <IconButton onClick={() => {}}>
+                                <GridCloseIcon />
+                              </IconButton>
+                            </Box>{" "}
+                          </Box>
+                        }
+                      />
+                      <FormControlLabel
+                        sx={{
+                          width: "100%",
+                          "& > span:last-child": {
+                            width: "100%",
+                          },
+                        }}
+                        control={<Radio color="secondary" />}
+                        label={
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              width: "100%",
+                            }}
+                          >
+                            <Box>
+                              <Typography>
+                                Introduce a new support category- Lorem Ipsum{" "}
+                              </Typography>
+                              <Typography variant="body2">
+                                Subtitle comes here if required
+                              </Typography>
+                            </Box>
+                            <Box>
+                              <IconButton onClick={() => {}}>
+                                <GridCloseIcon />
+                              </IconButton>
+                            </Box>{" "}
+                          </Box>
+                        }
+                      />
+                    </FormGroup>
+                  </Box>
+                </CardContent>
+              </Box>
+            </Card>
+          </Box>
+        </TabPanel>
+      </TabContext>
       <Dialog
         open={open}
         onClose={() => setOpen(false)}

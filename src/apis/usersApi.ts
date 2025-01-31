@@ -1,12 +1,12 @@
 // DOCS : https://redux-toolkit.js.org/rtk-query/usage-with-typescript
 // DOCS : https://jsonplaceholder.typicode.com
 
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 /**
  * Base API URL
  */
-const baseUrl: string = `${process.env.REACT_APP_BASE_API_URL}`;
+const baseUrl: string = `https://api.watchtower.gohq.in/api`;
 
 /**
  * User
@@ -49,14 +49,14 @@ type UserResponse = User;
  * Users API
  */
 export const usersApi = createApi({
-  reducerPath: 'usersApi',
+  reducerPath: "usersApi",
   baseQuery: fetchBaseQuery({
     baseUrl,
   }),
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => ({
-        url: '/users',
+        url: "/users",
         responseHandler: async (res: Response) => await res.json(),
       }),
       transformResponse: (res: UsersResponse) => res,
@@ -68,10 +68,34 @@ export const usersApi = createApi({
       }),
       transformResponse: (res: UserResponse) => res,
     }),
-  })
+    ticketCount: builder.query({
+      query: () => ({
+        url: `/tickets/counts`,
+        responseHandler: async (res: any) => await res.json(),
+      }),
+      transformResponse: (res: any) => res,
+    }),
+    getInsights: builder.query({
+      query: () => ({
+        url: `/insights`,
+        responseHandler: async (res: any) => await res.json(),
+      }),
+      transformResponse: (res: any) => res,
+    }),
+    getActionItems: builder.query({
+      query: () => ({
+        url: `/action-items?actionItemStatus=CREATED`,
+        responseHandler: async (res: any) => await res.json(),
+      }),
+      transformResponse: (res: any) => res,
+    }),
+  }),
 });
 
 export const {
   useGetUsersQuery,
   useGetUserByIdQuery,
+  useTicketCountQuery,
+  useGetInsightsQuery,
+  useGetActionItemsQuery,
 } = usersApi;

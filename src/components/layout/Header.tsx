@@ -12,6 +12,7 @@ import { themeActions } from "../../reducers/themeSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 import type { Children, Position } from "../../types";
+import { useTicketCountQuery } from "../../apis/usersApi";
 
 /**
  * Header
@@ -51,7 +52,7 @@ const Header = ({ children }: Children) => {
       >
         <Toolbar>
           <MenuButton drawerOpen={drawerOpen} onClick={handleDrawerClick} />
-          <Typography component="div" variant="h6" sx={{ width: "100%" }}>
+          {/* <Typography component="div" variant="h6" sx={{ width: "100%" }}>
             <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
               <Typography variant="h6" noWrap>
                 Tickets Total : 997
@@ -66,12 +67,12 @@ const Header = ({ children }: Children) => {
                 Tickets Escalated: 10
               </Typography>
             </Box>
-          </Typography>
-          <ThemeSwitch
+          </Typography> */}
+          {/* <ThemeSwitch
             checked={darkMode}
             onChange={handleThemeChange}
             sx={{ ml: 1 }}
-          />
+          /> */}
         </Toolbar>
       </AppBar>
       <Sidebar children={children} />
