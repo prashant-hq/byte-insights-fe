@@ -27,8 +27,6 @@ import {
   useTicketCountQuery,
 } from "../../../apis/usersApi";
 
-const arr = [1, 2, 3, 4, 5, 6];
-
 export const Home = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("1");
@@ -44,7 +42,7 @@ export const Home = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  const { data: insightsData } = useGetInsightsQuery({
+  const { data: insightsData, refetch } = useGetInsightsQuery({
     refetchOnMountOrArgChange: true,
   });
 
@@ -122,14 +120,33 @@ export const Home = () => {
           <Box
             sx={{
               display: "flex",
+              justifyContent: "space-between",
+              margin: "32px 32px 0px 32px",
+            }}
+          >
+            <Typography sx={{ color: "#424242", fontSize: "20px" }} noWrap>
+              Insights for you
+            </Typography>
+            <Typography
+              sx={{ color: "#00637F", fontSize: "16px", fontWeight: "600" }}
+              noWrap
+              onClick={() => refetch()}
+            >
+              Refresh
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               flexWrap: "wrap",
             }}
           >
-            {arr.map((el) => {
+            {insightsData?.map((el: any) => {
               return (
                 <Card
+                  key={el?._id}
                   elevation={elevation}
                   drawerOpen={drawerOpen}
                   sx={{
@@ -140,10 +157,8 @@ export const Home = () => {
                   }}
                 >
                   <CardHeader
-                    title="Material UI Boilerplate"
-                    subheader={`${new Date().toLocaleString("en-US", {
-                      dateStyle: "full",
-                    })}`}
+                    title={el?.title}
+                    subheader={el?.description}
                     titleTypographyProps={{
                       fontSize: 16,
                       fontWeight: 600,
@@ -159,7 +174,11 @@ export const Home = () => {
                       color="secondary"
                       variant="text"
                       onClick={() => setOpen(true)}
-                      sx={{ color: "#00637F", fontSize: "12px" }}
+                      sx={{
+                        color: "#00637F",
+                        fontSize: "12px",
+                        textTransform: "capitalize",
+                      }}
                     >
                       Know more
                     </Button>
