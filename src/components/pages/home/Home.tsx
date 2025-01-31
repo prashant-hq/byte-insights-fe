@@ -18,6 +18,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 
 import { Card, CardActions } from "../../styled/Card.styled";
@@ -31,14 +33,28 @@ import {
   useGetInsightsQuery,
   useTicketCountQuery,
   useUpdateActionItemsMutation,
+  useGetInsightFromPromptQuery,
 } from "../../../apis/usersApi";
 import groupBy from "lodash/groupBy";
+import SearchIcon from "@mui/icons-material/Search";
 
 export const Home = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("1");
   const [selectedId, setSelectedId] = useState("");
   const [selectValue, setSelectValue] = useState("CREATED");
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data, refetch: refetchInsightsFromPrompt } =
+    useGetInsightFromPromptQuery(searchQuery, {
+      skip: !searchQuery,
+    });
+  console.log(data);
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      refetchInsightsFromPrompt();
+    }
+  };
 
   const [deleteActionItem] = useDeleteActionItemsMutation();
   const [updateActionItem] = useUpdateActionItemsMutation();
@@ -89,6 +105,21 @@ export const Home = () => {
           </TabList>
         </Box>
         <TabPanel value="1">
+          <TextField
+            label="How can I help you today?"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{ width: "100%", borderRadius: "50px", marginBottom: "16px" }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton edge="end" onClick={handleSearch}>
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
           <Box>
             <Typography
               component="div"
@@ -238,7 +269,7 @@ export const Home = () => {
                 onChange={handleSelectChange}
               >
                 <MenuItem value={"CREATED"}>Pending</MenuItem>
-                <MenuItem value={"IMPLEMENTED"}>Implemented</MenuItem>
+                <MenuItem value={"PROCESSED"}>Implemented</MenuItem>
                 <MenuItem value={"REJECTED"}>Rejected</MenuItem>
               </Select>
             </FormControl>
@@ -284,7 +315,7 @@ export const Home = () => {
                           }}
                           color="error"
                         />
-                      ) : selectValue === "IMPLEMENTED" ? (
+                      ) : selectValue === "PROCESSED" ? (
                         <Chip
                           label="Implemented"
                           sx={{
