@@ -55,7 +55,34 @@ export const Home = () => {
   const [selectValue, setSelectValue] = useState("CREATED");
   const [selectedInsight, setSelectedInsight] = useState("");
   const [insightsData, setInsightsData] = useState<any>();
-  // const [dataFromPrompt, setDataFromPrompt] = useState<any>();
+  const [openPromptResult, setOpenPromptResult] = useState(false);
+  const [dataFromPrompt, setDataFromPrompt] = useState<any>();
+
+  const fetchInsight = async () => {
+    try {
+      const response = await fetch(
+        "https://api.watchtower.gohq.in/api/rag/insight",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie:
+              "connect.sid=s%3AT8eUzCetQj_R_cWwF3O_JdgWLjMNvkj-.rNHeeitvwTJhHuzO9JXJweLUHd5DYdYuofyBchKQ%2Fj0",
+          },
+          body: JSON.stringify({ prompt: searchQuery }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log(data?.text);
+      setDataFromPrompt(data?.text); // Update state with the parsed JSON
+      setOpenPromptResult(true); // Set dialog open state to true when dataFromPrompt is updated
+    } catch (error) {
+      console.error("Error fetching insight:", error);
+    }
+  };
 
   const [searchQuery, setSearchQuery] = useState<any>("");
   const { data, refetch: refetchInsightsFromPrompt } =
@@ -129,11 +156,16 @@ export const Home = () => {
             label="How can I help you today?"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            sx={{ width: "100%", borderRadius: "50px", marginBottom: "16px" }}
+            sx={{
+              width: "100%",
+              borderRadius: "50px",
+              marginBottom: "16px",
+              marginTop: "16px",
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton edge="end" onClick={handleSearch}>
+                  <IconButton edge="end" onClick={fetchInsight}>
                     <SearchIcon />
                   </IconButton>
                 </InputAdornment>
@@ -543,6 +575,49 @@ export const Home = () => {
           </DialogContentText>
         </DialogContent>
       </Dialog>
+      {dataFromPrompt && (
+        <Dialog
+          open={openPromptResult}
+          onClose={() => setOpenPromptResult(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle
+            id="modal-modal-title"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            Here is Your Answer
+            <IconButton onClick={() => setOpenPromptResult(false)}>
+              <GridCloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {searchQuery}
+              <Box
+                sx={{
+                  borderRadius: "16px",
+                  border: "1px solid #ccc",
+                  padding: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  width: "100%",
+                  backgroundColor: "white",
+                }}
+              >
+                <Typography variant="body1">{dataFromPrompt}</Typography>
+              </Box>
+              <Typography sx={{ margin: "1rem", color: "blue" }}>
+                Show me an alternate answer
+              </Typography>
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 };
