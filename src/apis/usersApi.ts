@@ -77,8 +77,8 @@ export const usersApi = createApi({
       transformResponse: (res: any) => res,
     }),
     getInsights: builder.query({
-      query: () => ({
-        url: `/insights`,
+      query: (refresh: boolean) => ({
+        url: `/insights${refresh ? "/refresh" : ""}`,
         responseHandler: async (res: any) => await res.json(),
       }),
       transformResponse: (res: any) => res,
@@ -125,7 +125,7 @@ export const {
   useGetUsersQuery,
   useGetUserByIdQuery,
   useTicketCountQuery,
-  useGetInsightsQuery,
+  useLazyGetInsightsQuery,
   useGetActionItemsQuery,
   useUpdateActionItemsMutation,
   useDeleteActionItemsMutation,

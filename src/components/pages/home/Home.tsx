@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CardHeader,
   Button,
@@ -37,13 +37,16 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   useDeleteActionItemsMutation,
   useGetActionItemsQuery,
-  useGetInsightsQuery,
   useTicketCountQuery,
   useUpdateActionItemsMutation,
   useGetInsightFromPromptQuery,
+  useLazyGetInsightsQuery,
 } from "../../../apis/usersApi";
 import groupBy from "lodash/groupBy";
 import SearchIcon from "@mui/icons-material/Search";
+import { Spinner } from "../../design";
+
+const refresh = false;
 
 export const Home = () => {
   const [open, setOpen] = useState(false);
@@ -51,6 +54,7 @@ export const Home = () => {
   const [selectedId, setSelectedId] = useState("");
   const [selectValue, setSelectValue] = useState("CREATED");
   const [selectedInsight, setSelectedInsight] = useState("");
+  const [insightsData, setInsightsData] = useState<any>();
   // const [dataFromPrompt, setDataFromPrompt] = useState<any>();
 
   const [searchQuery, setSearchQuery] = useState<any>("");
@@ -60,8 +64,6 @@ export const Home = () => {
     });
   // setDataFromPrompt(data as string);
 
-  console.log("data", data);
-
   const handleSearch = () => {
     if (searchQuery.trim()) {
       refetchInsightsFromPrompt();
@@ -70,6 +72,7 @@ export const Home = () => {
 
   const [deleteActionItem] = useDeleteActionItemsMutation();
   const [updateActionItem] = useUpdateActionItemsMutation();
+  const [getInsights, { isLoading, isFetching }] = useLazyGetInsightsQuery();
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -82,9 +85,14 @@ export const Home = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  const { data: insightsData, refetch } = useGetInsightsQuery({
-    refetchOnMountOrArgChange: true,
-  });
+  const handleGetInsights = async () => {
+    const data = await getInsights(refresh);
+    setInsightsData(data?.data);
+  };
+
+  useEffect(() => {
+    handleGetInsights();
+  }, []);
 
   const { data: actionsData } = useGetActionItemsQuery(selectValue, {
     refetchOnMountOrArgChange: true,
@@ -199,66 +207,71 @@ export const Home = () => {
             <Typography
               sx={{ color: "#00637F", fontSize: "16px", fontWeight: "600" }}
               noWrap
-              onClick={() => refetch()}
+              onClick={() => getInsights(true)}
             >
               Refresh
             </Typography>
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-            }}
-          >
-            {insightsData?.map((el: any) => {
-              return (
-                <Card
-                  key={el?._id}
-                  elevation={elevation}
-                  drawerOpen={drawerOpen}
-                  sx={{
-                    backgroundColor: "#DFF2F1",
-                    margin: "32px",
-                    width: "250px",
-                    height: "250px",
-                  }}
-                  onClick={() => {
-                    setSelectedInsight(el?._id);
-                    setOpen(true);
-                  }}
-                >
-                  <CardHeader
-                    title={el?.title}
-                    subheader={el?.description}
-                    titleTypographyProps={{
-                      fontSize: 16,
-                      fontWeight: 600,
-                    }}
-                    subheaderTypographyProps={{
-                      fontSize: 14,
-                      fontWeight: 500,
-                      marginTop: 2,
-                    }}
-                  />
-                  <CardActions sx={{ justifyContent: "right" }}>
-                    <Button
-                      color="secondary"
-                      variant="text"
+          {isLoading || isFetching ? (
+            <Spinner />
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+              }}
+            >
+              {insightsData &&
+                insightsData?.map((el: any) => {
+                  return (
+                    <Card
+                      key={el?._id}
+                      elevation={elevation}
+                      drawerOpen={drawerOpen}
                       sx={{
-                        color: "#00637F",
-                        fontSize: "12px",
-                        textTransform: "capitalize",
+                        backgroundColor: "#DFF2F1",
+                        margin: "32px",
+                        width: "250px",
+                        height: "250px",
+                      }}
+                      onClick={() => {
+                        setSelectedInsight(el?._id);
+                        setOpen(true);
                       }}
                     >
-                      Know more
-                    </Button>
-                  </CardActions>
-                </Card>
-              );
-            })}
-          </Box>
+                      <CardHeader
+                        title={el?.title}
+                        subheader={el?.description}
+                        titleTypographyProps={{
+                          fontSize: 16,
+                          fontWeight: 600,
+                        }}
+                        subheaderTypographyProps={{
+                          fontSize: 14,
+                          fontWeight: 500,
+                          marginTop: 2,
+                        }}
+                      />
+                      <CardActions sx={{ justifyContent: "right" }}>
+                        <Button
+                          color="secondary"
+                          variant="text"
+                          sx={{
+                            color: "#00637F",
+                            fontSize: "12px",
+                            textTransform: "capitalize",
+                          }}
+                        >
+                          Know more
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  );
+                })}
+            </Box>
+          )}
         </TabPanel>
         <TabPanel value="2">
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
