@@ -347,6 +347,12 @@ export const Home = () => {
                                     color="secondary"
                                     checked={action?._id === selectedId}
                                     onClick={() => setSelectedId(action?._id)}
+                                    sx={{
+                                      display:
+                                        action?.status === "CREATED"
+                                          ? "block"
+                                          : "none",
+                                    }}
                                   />
                                 }
                                 label={
