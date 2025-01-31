@@ -113,12 +113,7 @@ export const usersApi = createApi({
       query: (prompt) => ({
         url: "rag/insight",
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie:
-            "connect.sid=s%3AT8eUzCetQj_R_cWwF3O_JdgWLjMNvkj-.rNHeeitvwTJhHuzO9JXJweLUHd5DYdYuofyBchKQ%2Fj0", // Your Cookie
-        },
-        body: JSON.stringify({ prompt }),
+        body: prompt,
         responseHandler: async (res) => await res.json(),
       }),
       transformResponse: (res) => res,

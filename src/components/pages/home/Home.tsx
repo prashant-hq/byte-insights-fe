@@ -20,6 +20,13 @@ import {
   MenuItem,
   TextField,
   InputAdornment,
+  Paper,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 
 import { Card, CardActions } from "../../styled/Card.styled";
@@ -43,13 +50,18 @@ export const Home = () => {
   const [value, setValue] = useState("1");
   const [selectedId, setSelectedId] = useState("");
   const [selectValue, setSelectValue] = useState("CREATED");
+  const [selectedInsight, setSelectedInsight] = useState("");
+  // const [dataFromPrompt, setDataFromPrompt] = useState<any>();
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<any>("");
   const { data, refetch: refetchInsightsFromPrompt } =
     useGetInsightFromPromptQuery(searchQuery, {
       skip: !searchQuery,
     });
-  console.log(data);
+  // setDataFromPrompt(data as string);
+
+  console.log("data", data);
+
   const handleSearch = () => {
     if (searchQuery.trim()) {
       refetchInsightsFromPrompt();
@@ -212,6 +224,10 @@ export const Home = () => {
                     width: "250px",
                     height: "250px",
                   }}
+                  onClick={() => {
+                    setSelectedInsight(el?._id);
+                    setOpen(true);
+                  }}
                 >
                   <CardHeader
                     title={el?.title}
@@ -230,7 +246,6 @@ export const Home = () => {
                     <Button
                       color="secondary"
                       variant="text"
-                      onClick={() => setOpen(true)}
                       sx={{
                         color: "#00637F",
                         fontSize: "12px",
@@ -432,15 +447,86 @@ export const Home = () => {
             justifyContent: "space-between",
           }}
         >
-          Material UI Boilerplate
+          {insightsData?.find((el: any) => el?._id === selectedInsight)?.title}
           <IconButton onClick={() => setOpen(false)}>
             <GridCloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
+            {
+              insightsData?.find((el: any) => el?._id === selectedInsight)
+                ?.description
+            }
+            <Typography
+              sx={{ color: "#424242", fontSize: "20px", margin: "20px 0 8px" }}
+              noWrap
+            >
+              Insights
+            </Typography>
+            <Box>
+              {insightsData
+                ?.find((el: any) => el?._id === selectedInsight)
+                ?.insights?.map((insight: any) => {
+                  return (
+                    <Typography
+                      sx={{
+                        color: "#424242",
+                        fontSize: "14px",
+                      }}
+                      noWrap
+                    >
+                      {insight}
+                    </Typography>
+                  );
+                })}
+            </Box>
+            <Typography
+              sx={{ color: "#424242", fontSize: "20px", margin: "20px 0 8px" }}
+              noWrap
+            >
+              Impact
+            </Typography>
+            <Box>
+              <Typography
+                sx={{
+                  color: "#424242",
+                  fontSize: "14px",
+                }}
+                noWrap
+              >
+                {
+                  insightsData?.find((el: any) => el?._id === selectedInsight)
+                    ?.impact
+                }
+              </Typography>
+            </Box>
+            <Box sx={{ margin: "20px 0 8px" }}>
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Ticket id</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Subject</TableCell>
+                      <TableCell>Description</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {insightsData
+                      ?.find((el: any) => el?._id === selectedInsight)
+                      ?.tickets?.map((row: any) => (
+                        <TableRow key={row?._id}>
+                          <TableCell>{row?.id}</TableCell>
+                          <TableCell>{row?.status}</TableCell>
+                          <TableCell>{row?.subject}</TableCell>
+                          <TableCell>{row?.description}</TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
           </DialogContentText>
         </DialogContent>
       </Dialog>
