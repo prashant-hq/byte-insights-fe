@@ -51,6 +51,7 @@ import {
 } from "../../../apis/usersApi";
 import groupBy from "lodash/groupBy";
 import AutoModeIcon from '@mui/icons-material/AutoMode';
+import WarningIcon from "@mui/icons-material/Warning";
 import { Spinner } from "../../design";
 
 const refresh = false;
@@ -227,11 +228,12 @@ export const Home = () => {
                     <b>Opened:</b> {countData?.openTickets}
                   </Typography>
                   <Typography
-                    sx={{ color: "#424242", fontSize: "20px" }}
-                    noWrap
-                  >
-                    <b>Escalated:</b> {countData?.escalatedTickets}
-                  </Typography>
+  sx={{ color: "red", fontSize: "20px", display: "flex", alignItems: "center" }}
+  noWrap
+>
+  <WarningIcon sx={{ color: "red", marginRight: "4px" }} />
+  <b>Escalated: </b> {countData?.escalatedTickets}
+</Typography>
                 </Box>
               </Box>
             </Typography>
@@ -367,9 +369,6 @@ export const Home = () => {
               </Select>
             </FormControl>
           </Box>
-          <Box sx={{ width: "100%", margin: "0 32px" }}>
-            <Button variant="outlined">Integrate</Button>
-          </Box>
           <Box
             sx={{
               width: "100%",
@@ -398,6 +397,9 @@ export const Home = () => {
                         top: "-16px",
                         left: "-16px",
                         backgroundColor: "#DFF2F1",
+                        borderBottomLeftRadius: '0px',
+                        borderTopRightRadius: '0px',
+
                       }}
                     />
                     <>
@@ -408,6 +410,8 @@ export const Home = () => {
                             position: "absolute",
                             top: "-16px",
                             right: "-16px",
+                            borderBottomLeftRadius: '0px',
+                            borderTopRightRadius: '0px',
                           }}
                           color="error"
                         />
@@ -420,6 +424,8 @@ export const Home = () => {
                             right: "-16px",
                             backgroundColor: "#DFF2F1",
                             color: "#08753F",
+                            borderBottomLeftRadius: '0px',
+                            borderTopRightRadius: '0px',
                           }}
                         />
                       ) : null}
