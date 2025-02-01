@@ -53,6 +53,7 @@ export const usersApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl,
   }),
+  tagTypes: ["ActionItems"],
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => ({
@@ -76,32 +77,47 @@ export const usersApi = createApi({
       transformResponse: (res: any) => res,
     }),
     getInsights: builder.query({
-      query: () => ({
-        url: `/insights`,
+      query: (refresh: boolean) => ({
+        url: `/insights${refresh ? "/refresh" : ""}`,
         responseHandler: async (res: any) => await res.json(),
       }),
       transformResponse: (res: any) => res,
     }),
     getActionItems: builder.query({
-      query: () => ({
-        url: `/action-items?actionItemStatus=CREATED`,
+      query: (item: string) => ({
+        url: `/action-items?actionItemStatus=${item}`,
         responseHandler: async (res: any) => await res.json(),
       }),
       transformResponse: (res: any) => res,
+      providesTags: ["ActionItems"],
+    }),
+    updateActionItems: builder.mutation({
+      query: (actionItemId: string) => ({
+        url: `/action-items/${actionItemId}`,
+        method: "PUT",
+        responseHandler: async (res: any) => await res.json(),
+      }),
+      transformResponse: (res: any) => res,
+      invalidatesTags: ["ActionItems"],
+    }),
+    deleteActionItems: builder.mutation({
+      query: (actionItemId: string) => ({
+        url: `/action-items/${actionItemId}`,
+        method: "DELETE",
+        responseHandler: async (res: any) => await res.json(),
+      }),
+      transformResponse: (res: any) => res,
+      invalidatesTags: ["ActionItems"],
     }),
     getInsightFromPrompt: builder.query({
       query: (prompt) => ({
-        url: 'rag/insight',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': 'connect.sid=s%3AT8eUzCetQj_R_cWwF3O_JdgWLjMNvkj-.rNHeeitvwTJhHuzO9JXJweLUHd5DYdYuofyBchKQ%2Fj0', // Your Cookie
-        },
-        body: JSON.stringify({ prompt }),
-        responseHandler: async (res) => await res.json(), 
+        url: "rag/insight",
+        method: "POST",
+        body: prompt,
+        responseHandler: async (res) => await res.json(),
       }),
-      transformResponse: (res) => res, 
-    })
+      transformResponse: (res) => res,
+    }),
   }),
 });
 
@@ -109,7 +125,9 @@ export const {
   useGetUsersQuery,
   useGetUserByIdQuery,
   useTicketCountQuery,
-  useGetInsightsQuery,
+  useLazyGetInsightsQuery,
   useGetActionItemsQuery,
-  useGetInsightFromPromptQuery
+  useUpdateActionItemsMutation,
+  useDeleteActionItemsMutation,
+  useGetInsightFromPromptQuery,
 } = usersApi;
