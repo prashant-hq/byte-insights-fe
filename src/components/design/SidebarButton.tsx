@@ -18,7 +18,7 @@ export const SidebarMenuButton = ({ drawerOpen, onClick }: SidebarMenuButtonProp
     onClick={onClick}
     edge='start'
     sx={{
-      color: 'primary.contrastText',
+      color: 'white',
       marginRight: 5,
       ...(drawerOpen && { display: 'none' }),
     }}

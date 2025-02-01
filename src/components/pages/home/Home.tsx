@@ -657,7 +657,7 @@ export const Home = () => {
             </IconButton>
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
+            <DialogContentText id="alert-dialog-description" sx={{ fontWeight: 800}}>
               {searchQuery}
               <Box
                 sx={{
@@ -672,9 +672,6 @@ export const Home = () => {
               >
                 <Typography variant="body1">{dataFromPrompt}</Typography>
               </Box>
-              <Typography sx={{ margin: "1rem", color: "blue" }}>
-                Show me an alternate answer
-              </Typography>
             </DialogContentText>
           </DialogContent>
         </Dialog>
