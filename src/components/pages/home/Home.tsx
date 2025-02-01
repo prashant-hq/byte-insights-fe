@@ -31,10 +31,10 @@ import {
   CardMedia,
   Accordion,
   AccordionSummary,
-  AccordionDetails
+  AccordionDetails,
 } from "@mui/material";
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Card, CardActions } from "../../styled/Card.styled";
 import { useAppSelector } from "../../../app/hooks";
@@ -145,36 +145,35 @@ export const Home = () => {
   return (
     <>
       <TextField
-      label="How can I help you today?"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      sx={{
-        width: '100%',
-        borderRadius: "50px", // Increased border-radius value for roundness
-        '& .MuiOutlinedInput-root': {
-          borderRadius: "50px", // Ensures the input field itself is rounded
-        },
-      }}
-
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          fetchInsight();
-        }
-      }}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton edge="end" onClick={fetchInsight} disabled={loading}>
-              {loading ? (
-                <CircularProgress size={24} sx={{ color: '#00637F' }} />
-              ) : (
-                <SearchIcon />
-              )}
-            </IconButton>
-          </InputAdornment>
-        ),
-      }}
-    />
+        label="How can I help you today?"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        sx={{
+          width: "100%",
+          borderRadius: "50px", // Increased border-radius value for roundness
+          "& .MuiOutlinedInput-root": {
+            borderRadius: "50px", // Ensures the input field itself is rounded
+          },
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            fetchInsight();
+          }
+        }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton edge="end" onClick={fetchInsight} disabled={loading}>
+                {loading ? (
+                  <CircularProgress size={24} sx={{ color: "#00637F" }} />
+                ) : (
+                  <SearchIcon />
+                )}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList onChange={handleChange} aria-label="lab API tabs example">
@@ -244,8 +243,17 @@ export const Home = () => {
               margin: "32px 32px 0px 32px",
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
-              <Typography sx={{ color: "#424242", fontSize: "20px", marginRight: "10px" }} noWrap>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
+              <Typography
+                sx={{ color: "#424242", fontSize: "20px", marginRight: "10px" }}
+                noWrap
+              >
                 Insights for you
               </Typography>
               <img
@@ -256,7 +264,12 @@ export const Home = () => {
               />
             </Box>
             <Typography
-              sx={{ color: "#00637F", fontSize: "16px", fontWeight: "600", cursor: "pointer" }}
+              sx={{
+                color: "#00637F",
+                fontSize: "16px",
+                fontWeight: "600",
+                cursor: "pointer",
+              }}
               noWrap
               onClick={() => getInsights(true)}
             >
@@ -267,62 +280,62 @@ export const Home = () => {
             <Spinner />
           ) : (
             <Box
-  sx={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexWrap: "wrap",
-    gap: "16px", // Adjust this to reduce the space between cards
-  }}
->
-  {insightsData &&
-    insightsData?.map((el: any) => {
-      return (
-        <Card
-          key={el?._id}
-          elevation={elevation}
-          drawerOpen={drawerOpen}
-          sx={{
-            backgroundImage: "linear-gradient(to bottom, #DFF2F1, #F2FAF9)",
-            width: "250px",
-            height: "250px",
-            cursor: "pointer",
-            margin: "0", // Removed margin to reduce space between cards
-          }}
-          onClick={() => {
-            setSelectedInsight(el?._id);
-            setOpen(true);
-          }}
-        >
-          <CardHeader
-          
-            title={el?.title}
-            subheader={
-              <Typography
-                sx={{
-                  fontSize: 12,
-                  fontWeight: 400,
-                  marginTop: 2,
-                  display: "-webkit-box", // Enables multi-line truncation
-                  overflow: "hidden",
-                  WebkitBoxOrient: "vertical", // Ensures vertical text orientation
-                  WebkitLineClamp: 5, // Limits text to 5 lines
-                  textOverflow: "ellipsis", // Adds the ellipsis
-                }}
-              >
-                {el?.description}
-              </Typography>}
-            subheaderTypographyProps={{
-              fontSize: 14,
-              fontWeight: 500,
-              marginTop: 2,
-            }}
-          />
-        </Card>
-      );
-    })}
-</Box>
-
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: "16px", // Adjust this to reduce the space between cards
+              }}
+            >
+              {insightsData &&
+                insightsData?.map((el: any) => {
+                  return (
+                    <Card
+                      key={el?._id}
+                      elevation={elevation}
+                      drawerOpen={drawerOpen}
+                      sx={{
+                        backgroundImage:
+                          "linear-gradient(to bottom, #DFF2F1, #F2FAF9)",
+                        width: "250px",
+                        height: "250px",
+                        cursor: "pointer",
+                        margin: "0", // Removed margin to reduce space between cards
+                      }}
+                      onClick={() => {
+                        setSelectedInsight(el?._id);
+                        setOpen(true);
+                      }}
+                    >
+                      <CardHeader
+                        title={el?.title}
+                        subheader={
+                          <Typography
+                            sx={{
+                              fontSize: 12,
+                              fontWeight: 400,
+                              marginTop: 2,
+                              display: "-webkit-box", // Enables multi-line truncation
+                              overflow: "hidden",
+                              WebkitBoxOrient: "vertical", // Ensures vertical text orientation
+                              WebkitLineClamp: 5, // Limits text to 5 lines
+                              textOverflow: "ellipsis", // Adds the ellipsis
+                            }}
+                          >
+                            {el?.description}
+                          </Typography>
+                        }
+                        subheaderTypographyProps={{
+                          fontSize: 14,
+                          fontWeight: 500,
+                          marginTop: 2,
+                        }}
+                      />
+                    </Card>
+                  );
+                })}
+            </Box>
           )}
         </TabPanel>
         <TabPanel value="2">
@@ -349,10 +362,13 @@ export const Home = () => {
                 onChange={handleSelectChange}
               >
                 <MenuItem value={"CREATED"}>Pending</MenuItem>
-                <MenuItem value={"PROCESSED"}>Implemented</MenuItem>
+                <MenuItem value={"PROCESSED"}>Processed</MenuItem>
                 <MenuItem value={"REJECTED"}>Rejected</MenuItem>
               </Select>
             </FormControl>
+          </Box>
+          <Box sx={{ width: "100%", margin: "0 32px" }}>
+            <Button variant="outlined">Integrate</Button>
           </Box>
           <Box
             sx={{
@@ -397,7 +413,7 @@ export const Home = () => {
                         />
                       ) : selectValue === "PROCESSED" ? (
                         <Chip
-                          label="Implemented"
+                          label="Processed"
                           sx={{
                             position: "absolute",
                             top: "-16px",
@@ -464,12 +480,21 @@ export const Home = () => {
                                             <Button
                                               type="submit"
                                               variant="contained"
-                                              sx={{ color: "#fff" }}
+                                              sx={{
+                                                color: "#fff",
+                                                width: "150px",
+                                              }}
                                               onClick={() =>
                                                 handleUpdate(action?._id)
                                               }
                                             >
-                                              Implement
+                                              {el === "jira"
+                                                ? "Raise Ticket"
+                                                : el === "alert"
+                                                ? "Send Alert"
+                                                : el === "faq"
+                                                ? "Create FAQ"
+                                                : null}
                                             </Button>
                                           ) : (
                                             <IconButton
@@ -566,42 +591,40 @@ export const Home = () => {
             </Box>
             <Box sx={{ margin: "20px 0 8px" }}>
               <Accordion sx={{ backgroundColor: "white" }}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                >
+                  <Typography component="span">Supporting Data</Typography>
+                </AccordionSummary>
 
-              <AccordionSummary
-              expandIcon={<ExpandMoreIcon/>}
-                aria-controls="panel1-content"
-                id="panel1-header"
-
-              >
-                <Typography component="span">Supporting Data</Typography>
-              </AccordionSummary>
-
-            <AccordionDetails>
-              <TableContainer component={Paper} elevation={0}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Ticket id</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Subject</TableCell>
-                      <TableCell>Description</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {insightsData
-                      ?.find((el: any) => el?._id === selectedInsight)
-                      ?.tickets?.map((row: any) => (
-                        <TableRow key={row?._id}>
-                          <TableCell>{row?.id}</TableCell>
-                          <TableCell>{row?.status}</TableCell>
-                          <TableCell>{row?.subject}</TableCell>
-                          <TableCell>{row?.description}</TableCell>
+                <AccordionDetails>
+                  <TableContainer component={Paper} elevation={0}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Ticket id</TableCell>
+                          <TableCell>Status</TableCell>
+                          <TableCell>Subject</TableCell>
+                          <TableCell>Description</TableCell>
                         </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              </AccordionDetails>
+                      </TableHead>
+                      <TableBody>
+                        {insightsData
+                          ?.find((el: any) => el?._id === selectedInsight)
+                          ?.tickets?.map((row: any) => (
+                            <TableRow key={row?._id}>
+                              <TableCell>{row?.id}</TableCell>
+                              <TableCell>{row?.status}</TableCell>
+                              <TableCell>{row?.subject}</TableCell>
+                              <TableCell>{row?.description}</TableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </AccordionDetails>
               </Accordion>
             </Box>
           </DialogContentText>
