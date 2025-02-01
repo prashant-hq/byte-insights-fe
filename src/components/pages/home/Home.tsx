@@ -539,7 +539,6 @@ export const Home = () => {
                         color: "#424242",
                         fontSize: "14px",
                       }}
-                      noWrap
                     >
                       {insight}
                     </Typography>
@@ -558,7 +557,6 @@ export const Home = () => {
                   color: "#424242",
                   fontSize: "14px",
                 }}
-                noWrap
               >
                 {
                   insightsData?.find((el: any) => el?._id === selectedInsight)
