@@ -50,7 +50,7 @@ import {
   useLazyGetInsightsQuery,
 } from "../../../apis/usersApi";
 import groupBy from "lodash/groupBy";
-import SearchIcon from "@mui/icons-material/Search";
+import AutoModeIcon from '@mui/icons-material/AutoMode';
 import { Spinner } from "../../design";
 
 const refresh = false;
@@ -167,7 +167,7 @@ export const Home = () => {
                 {loading ? (
                   <CircularProgress size={24} sx={{ color: "#00637F" }} />
                 ) : (
-                  <SearchIcon />
+                  <AutoModeIcon />
                 )}
               </IconButton>
             </InputAdornment>
