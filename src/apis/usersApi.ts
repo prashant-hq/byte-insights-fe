@@ -6,7 +6,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 /**
  * Base API URL
  */
-const baseUrl: string = `https://api.watchtower.gohq.in/api/`;
+const baseUrl: string = `https://api-watchtower.gohq.in/api/`;
 
 /**
  * User

@@ -71,7 +71,7 @@ export const Home = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://api.watchtower.gohq.in/api/rag/insight",
+        "https://api-watchtower.gohq.in/api/rag/insight",
         {
           method: "POST",
           headers: {
